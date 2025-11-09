@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BAND-MAID Songs</title>
+<link rel="icon" type="image/png" href="favicon.png">
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -116,18 +117,35 @@ function renderSongs() {
     details.className = 'details';
 
     let html = '<table>';
+
     for (const key in song) {
-      if (!song[key]) continue;
+           if (song[key] === null || song[key] === undefined || song[key] === '') continue;
 
-      let value = song[key];
-      if (key === 'LyricsURL' || key === 'EnglishLyricsURL') {
-        value = `<a href="${value}" target="_blank">${value}</a>`;
-      } else if (typeof value === 'string' && value.includes('\n')) {
-        value = `<pre>${value}</pre>`;
-      }
+           let value = song[key];
 
-      html += `<tr><td><strong>${key}</strong>:</td><td>${value}</td></tr>`;
-    }
+           // Format numbers with commas
+           if (typeof value === 'number' && 
+            (key === 'SpotifyStreams' || key === 'YouTubeTotalStreams')) {
+              value = value.toLocaleString();
+           }
+
+           // Convert string numbers to formatted numbers too
+           if (typeof value === 'string' &&
+               !isNaN(value) &&
+               (key === 'SpotifyStreams' || key === 'YouTubeTotalStreams')) {
+            value = Number(value).toLocaleString();
+           }
+
+           if (key === 'LyricsURL' || key === 'EnglishLyricsURL') {
+               value = `<a href="${value}" target="_blank">${value}</a>`;
+           } else if (typeof value === 'string' && value.includes('\n')) {
+               value = `<pre>${value}</pre>`;
+           }
+
+           html += `<tr><td><strong>${key}</strong>:</td><td>${value}</td></tr>`;
+   }
+
+
     html += '</table>';
     details.innerHTML = html;
 
